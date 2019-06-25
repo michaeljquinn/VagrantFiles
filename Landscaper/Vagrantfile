@@ -1,0 +1,27 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "base"
+end
+
+VAGRANTFILE_API_VERSION = "2"
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  config.vm.box = "bento/ubuntu-18.04"
+  config.vm.hostname = "Landscaper"
+
+  config.vm.synced_folder ".", "/vagrant", :mount_options => ["dmode=777","fmode=777"]
+  config.vm.synced_folder "/media/mquinn/OS/Users/mquinn/gitRepo/VagrantFiles/scripts/os-installs", "/os-installs", :mount_options => ["dmode=777","fmode=777"]
+  config.vm.synced_folder "//media/mquinn/OS/Users/mquinn/gitRepo/landscaper", "/landscaper", :mount_options => ["dmode=777","fmode=777"]
+  #config.vm.network :public_network, ip: "10.0.0.101"
+  config.vm.network :public_network
+
+  config.vm.provider :virtualbox do |vb|
+    vb.customize ["modifyvm", :id, "--memory", "4096"]
+    vb.customize ["modifyvm", :id, "--name", "landscaper.dev.ubuntu18.04"]
+    vb.gui = "true"
+  end
+  config.vm.provision :shell, :inline => "/os-installs/ubuntu-18.04LTS/install-minimal-ubuntu18lts.bash"
+  config.vm.provision :shell, :inline => "/os-installs/ubuntu-18.04LTS/shutdown.bash"
+end
